@@ -1,0 +1,71 @@
+{
+ "run_manifest_version": "clinevolve_tree_search_v1 (paper Experiment 2 configuration)",
+ "selection_status": "frozen",
+ "a0": {
+  "model": "openai/qwen3.5-9b",
+  "served_model_name": "qwen3.5-9b",
+  "thinking": false,
+  "temperature": 0.0,
+  "max_tokens": 4096
+ },
+ "search": {
+  "candidate_budget": 8,
+  "candidate_parent_rule": "tree_search",
+  "search_policy_config": {
+   "content": {
+    "policy_version": "exp2_formal_hgm_policy_v1",
+    "alpha": 0.6,
+    "initial_root_expansions": 1,
+    "tau_min": 1.0,
+    "tau_max": 50.0,
+    "max_children_per_node": null,
+    "max_evaluations_per_node": 1,
+    "min_evaluations_before_expansion": 0,
+    "expandable_statuses": [
+     "root",
+     "evaluated"
+    ],
+    "evaluatable_statuses": [
+     "generated",
+     "pending_evaluation"
+    ],
+    "random_seed": 20260908
+   }
+  },
+  "controller_config": {
+   "content": {
+    "controller_version": "exp2_formal_controller_v1",
+    "search_budget_units": 16,
+    "expansion_cost_units": 1,
+    "evaluation_cost_units": 1,
+    "autosave_each_step": true,
+    "stop_when_no_action": true
+   }
+  }
+ },
+ "candidate_modification_scope": {
+  "allowed_paths": [
+   "task_agent.py"
+  ],
+  "forbidden_paths": [
+   "agent",
+   "clinevolve",
+   "configs",
+   "meta_agent.py",
+   "outputs",
+   "runs",
+   "data"
+  ]
+ },
+ "data_separation": {
+  "repair_cases_may_generate_patches": true,
+  "candidate_validation_selection_only": true,
+  "candidate_validation_may_generate_new_patch": false,
+  "locked_test_may_generate_patch": false,
+  "locked_test_may_select_candidate": false
+ },
+ "controller": {
+  "search_budget_units": 8
+ },
+ "notes": "Tree search over task-agent candidates from A0 (HGM-style Thompson sampling, alpha/tau as below); search feedback = repair-set strict improvement of the target over the actual parent; the two best candidates on the repair set are then validated with clinevolve.gates_exp2 (earlier gate specification: comparison with the actual parent, 2 pp workflow and 0.2 pp tool margins, no new-regression gate) or clinevolve.gates (G1-G6)."
+}

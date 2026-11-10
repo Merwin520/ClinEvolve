@@ -1,0 +1,59 @@
+# ClinEvolve configuration. Values not given here fall back to clinevolve/config.py (the paper settings).
+paths:
+  mimic_cdm_dir: data/mimic-cdm      # MIMIC-CDM CSV files (PhysioNet credentialed access)
+  cases: data/cases.csv              # case_id, subject_id, outer_fold, role (repair | validation | locked_test)
+  work_dir: runs
+
+models:
+  task:
+    name: openai/qwen3.5-9b
+    servers: [http://127.0.0.1:8801/v1, http://127.0.0.1:8802/v1, http://127.0.0.1:8803/v1]
+  meta:
+    name: openai/qwen3.5-27b
+    servers: [http://127.0.0.1:8500/v1]
+    temperature: 0.7
+    max_tokens: 2048
+
+evaluation:
+  shards_per_evaluation: 16
+  evaluations_per_server: 8
+  generations_per_server: 24
+  feedback_max_examples: 20
+
+sandbox:
+  enabled: true                      # requires bubblewrap (bwrap); set false only for debugging
+
+gates:
+  target_minimum_improvement_pp: 1.0
+  retention_margin_pp: 2.0
+  nontarget_workflow_margin_pp: 3.0
+  final_diagnosis_margin_pp: 1.0
+  tool_safety_margin_pp: 0.6
+  resource_inflation_margin: {mean_tool_calls_ratio: 1.25, mean_total_tokens_ratio: 1.5}
+  new_regression_margin_pp: 5.0
+
+repair:
+  candidates: 10
+  generation_waves: [5, 10]
+  budgets_k: [5, 10]
+
+sequential:
+  stage_order: [diagnostic_process_failure, lab_interpretation_failure, treatment_guideline_failure]
+  candidates_per_stage: 4
+  validation_candidates_per_stage: 2
+  archive_capacity: 2
+  use_gates: true
+
+self_improvement:
+  rounds: 2
+  variants_per_round: 3
+  candidates_per_target: 4
+  targets: [diagnostic_process_failure, treatment_guideline_failure]
+
+lineage:
+  policy: lineage
+  target: PT
+  steps: 12
+  children_per_step: 4
+  ucb_c_pp: 2.0
+  seed: 20261018

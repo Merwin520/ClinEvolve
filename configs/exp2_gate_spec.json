@@ -1,0 +1,68 @@
+{
+  "version": "exp2_formal_gate_spec_v2",
+
+  "G1_target_improvement": {
+    "comparison": "candidate_vs_actual_parent",
+    "analysis": "paired_common_evaluable_cases",
+    "endpoint": "repair_target_failure",
+    "direction": "lower_is_better",
+    "minimum_absolute_improvement": 0.01
+  },
+
+  "G2_workflow_noninferiority": {
+    "comparison": "candidate_vs_actual_parent",
+    "analysis": "paired_common_evaluable_cases",
+    "endpoints": "all_non_target_workflow_failure_endpoints",
+    "maximum_absolute_worsening": 0.02,
+    "decision_rule": "every_endpoint_must_satisfy_margin"
+  },
+
+  "G3_final_diagnosis_noninferiority": {
+    "comparison": "candidate_vs_actual_parent",
+    "analysis": "paired_common_evaluable_cases",
+    "endpoint": "final_diagnosis_failure",
+    "maximum_absolute_worsening": 0.01
+  },
+
+  "G4_tool_execution_safety": {
+    "generation_precondition": {
+      "frozen_execution_invariant_violation": "candidate_rejected_before_evaluation"
+    },
+
+    "context_window_exceeded_rate": {
+      "rule": "candidate_not_higher_than_parent"
+    },
+
+    "trajectory_execution_failure_rate": {
+      "rule": "candidate_not_higher_than_parent"
+    },
+
+    "invalid_tool_call_rate": {
+      "maximum_absolute_worsening": 0.002
+    },
+
+    "tool_execution_error_rate": {
+      "maximum_absolute_worsening": 0.002
+    },
+
+    "instruction_tool_failure": {
+      "analysis": "paired_common_evaluable_cases",
+      "maximum_absolute_worsening": 0.002
+    }
+  },
+
+  "G5_resource_budget": {
+    "mean_tool_calls_max_ratio": 1.10,
+    "mean_repeated_calls_max_ratio": 1.10,
+    "mean_latency_sec_max_ratio": 1.20,
+    "trajectory_execution_failure_rate_rule": "candidate_not_higher_than_parent"
+  },
+
+  "multiplicity": {
+    "method": "pre_specified_deterministic_conjunctive_thresholds",
+    "gate_combination": "all_G1_to_G5_must_pass",
+    "within_gate_rule": "all_component_thresholds_must_pass",
+    "p_value_adjustment": "none",
+    "rationale": "No post-hoc inferential multiplicity procedure is applied; all margins and thresholds are frozen before formal evaluation."
+  }
+}
